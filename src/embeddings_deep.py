@@ -29,7 +29,37 @@ def batch_embeddings():
         print(f"Vector norm: {np.linalg.norm(emb):.4f}")
         
 
+def cosine_similarity(v1,v2):
+    return np.dot(v1,v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+
+def similarity_search():
+    
+    #Documents
+    docs = [
+        "The Eiffel Tower is located in Paris, France.",
+        "The Statue of Liberty is located in New York, USA.",
+        "The Great Wall of China is located in China.",
+        "The Colosseum is located in Rome, Italy.",
+        "The Taj Mahal is located in Agra, India.",
+    ]
+    
+    query = "Where is the Eiffel Tower located?"
+
+    query_vector = embeddings_model.embed_query(query)
+
+    doc_vectors = embeddings_model.embed_documents(docs)
+
+    
+    similarties = [cosine_similarity(query_vector,vec)for vec in doc_vectors]
+
+    ranked_docs = sorted(zip(docs,similarties),key = lambda x : x[1],reverse = True)
+
+    print(f"Query: {query}\n")
+    print("Ranked by similarity:")
+    for doc , score in ranked_docs:
+        print(f"Score: {score:.4f}, Doc: {doc}")
 
 if __name__ == "__main__":
     # basic_embeddings()
-    batch_embeddings()
+    # batch_embeddings()
+    similarity_search()
